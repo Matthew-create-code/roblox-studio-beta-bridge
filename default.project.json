@@ -1,0 +1,46 @@
+{
+  "name": "RobloxStudioBetaBridgeProject",
+  "tree": {
+    "$className": "DataModel",
+    "Workspace": {
+      "$className": "Workspace",
+      "$path": "src/workspace"
+    },
+    "Lighting": {
+      "$className": "Lighting",
+      "$path": "src/lighting"
+    },
+    "MaterialService": {
+      "$className": "MaterialService",
+      "$path": "src/material_service"
+    },
+    "TextChatService": {
+      "$className": "TextChatService",
+      "$path": "src/text_chat_service"
+    },
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "$path": "src/replicated_storage"
+    },
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "$path": "src/server_script_service"
+    },
+    "ServerStorage": {
+      "$className": "ServerStorage",
+      "$path": "src/server_storage"
+    },
+    "StarterGui": {
+      "$className": "StarterGui",
+      "$path": "src/starter_gui"
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "$path": "src/starter_player"
+    },
+    "SoundService": {
+      "$className": "SoundService",
+      "$path": "src/sound_service"
+    }
+  }
+}
