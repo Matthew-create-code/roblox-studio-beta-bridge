@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox Studio Beta Bridge</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #1e1e24; color: #fff; text-align: center; padding: 40px; }
+        .container { max-width: 600px; margin: 0 auto; background: #2a2a35; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        input { width: 80%; padding: 12px; border: none; border-radius: 6px; margin-bottom: 15px; font-size: 16px; }
+        button { background-color: #00a2ff; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: bold; }
+        button:hover { background-color: #0082cc; }
+        .game-card { background: #3a3a4c; padding: 15px; margin-top: 15px; border-radius: 8px; text-align: left; border-left: 5px solid #00a2ff; }
+        .error { color: #ff4a4a; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🚀 Roblox Studio Beta Bridge</h2>
+    <p>Enter a public username to retrieve public experiences for Studio migration.</p>
+    
+    <input type="text" id="usernameInput" placeholder="Enter Roblox Username (e.g., Builderman)">
+    <br>
+    <button onclick="fetchRobloxData()">Check Public Games</button>
+
+    <div id="errorLog" class="error"></div>
+    <div id="resultsList"></div>
+</div>
+
+<script>
+async function fetchRobloxData() {
+    const username = document.getElementById('usernameInput').value.trim();
+    const errorLog = document.getElementById('errorLog');
+    const resultsList = document.getElementById('resultsList');
+    
+    errorLog.innerText = "";
+    resultsList.innerHTML = "";
+
+    if (!username) {
+        errorLog.innerText = "Please enter a valid username.";
+        return;
+    }
+
+    try {
+        // 1. Fetch User ID from Username (Using a public CORS proxy because Roblox blocks direct browser requests)
+        const proxy = "https://allorigins.win";
+        const userUrl = encodeURIComponent(`https://roblox.com`);
+        
+        const userResponse = await fetch(`${proxy}${userUrl}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ usernames: [username], excludeBannedUsers: true })
+        });
+        
+        const userDataWrapper = await userResponse.json();
+        const userData = JSON.parse(userDataWrapper.contents);
+
+        if (!userData.data || userData.data.length === 0) {
+            errorLog.innerText = "User not found on Roblox.";
+            return;
+        }
+
+        const userId = userData.data[0].id;
+        
+        // 2. Fetch Public Games List
+        const gamesUrl = encodeURIComponent(`https://roblox.com{userId}/games?accessFilter=Public&limit=10`);
+        const gamesResponse = await fetch(`${proxy}${gamesUrl}`);
+        const gamesDataWrapper = await gamesResponse.json();
+        const gamesData = JSON.parse(gamesDataWrapper.contents);
+
+        if (!gamesData.data || gamesData.data.length === 0) {
+            resultsList.innerHTML = "<p>No public games found for this user.</p>";
+            return;
+        }
+
+        // 3. Display Games to the user
+        gamesData.data.forEach(game => {
+            const card = document.createElement('div');
+            card.className = 'game-card';
+            card.innerHTML = `
+                <strong>🎮 ${game.name}</strong><br>
+                <span>Universe ID: ${game.id}</span><br>
+                <span>Root Place ID: ${game.rootPlaceId}</span><br>
+                <small>Ready for Rojo / Open Cloud tracking</small>
+            `;
+            resultsList.appendChild(card);
+        });
+
+    } catch (err) {
+        errorLog.innerText = "Error communicating with public APIs. Try again.";
+        console.error(err);
+    }
+}
+</script>
+
+</body>
+</html>
